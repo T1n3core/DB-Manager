@@ -1,9 +1,9 @@
 package io.github.T1n3core.DB_Manager.model;
 
 /**
- * Represents a contract of
- * {@linkplain io.github.T1n3core.DB_Manager.model.StrojnaOprema hardware} being
- * delegated to an {@linkplain io.github.T1n3core.DB_Manager.model.Zaposleni
+ * Represents a delegation of
+ * {@linkplain io.github.T1n3core.DB_Manager.model.StrojnaOprema hardware} to an
+ * {@linkplain io.github.T1n3core.DB_Manager.model.Zaposleni
  * employee}.
  * Stores entity refferences instead of foreign key integers for easier
  * abstraction.
