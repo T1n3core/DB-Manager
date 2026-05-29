@@ -1,8 +1,14 @@
 package io.github.T1n3core.DB_Manager.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import io.github.T1n3core.DB_Manager.db.DatabaseConnection;
 import io.github.T1n3core.DB_Manager.model.Servis;
 
 /**
@@ -11,11 +17,25 @@ import io.github.T1n3core.DB_Manager.model.Servis;
  * Object} for {@linkplain io.github.T1n3core.DB_Manager.model.Servis services}.
  */
 public class ServisDAO implements GenericDAO<Servis, Integer> {
-	private final List<Servis> servisi = new ArrayList<>();
-
 	@Override
 	public List<Servis> findAll() {
-		return servisi;
+		List<Servis> servisList = new ArrayList<>();
+
+		String sql = "SELECT * FROM SERVIS";
+
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement stmt = conn.prepareStatement(sql);
+				ResultSet rs = stmt.executeQuery()) {
+			while (rs.next()) {
+				Servis servis = new Servis();
+
+				servisList.add(servis);
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+
+		return servisList;
 	}
 
 	@Override
