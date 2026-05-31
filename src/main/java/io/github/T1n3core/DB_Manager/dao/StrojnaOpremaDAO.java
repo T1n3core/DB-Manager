@@ -22,19 +22,27 @@ public class StrojnaOpremaDAO implements GenericDAO<StrojnaOprema, Integer> {
 	public List<StrojnaOprema> findAll() {
 		List<StrojnaOprema> strojnaOpremaList = new ArrayList<>();
 
-		String sql = "SELECT * FROM STROJNA_OPREMA";
+		String sql = """
+				SELECT
+					strojna_oprema_id,
+					naziv,
+					tip,
+					serijska_stevilka,
+					datum_nakupa
+				FROM STROJNA_OPREMA
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql);
-				ResultSet rs = stmt.getResultSet()) {
-			while (rs.next()) {
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql);
+				ResultSet resultSet = statement.getResultSet()) {
+			while (resultSet.next()) {
 				StrojnaOprema strojnaOprema = new StrojnaOprema();
 
-				strojnaOprema.setStrojnaOpremaId(rs.getInt("strojna_oprema_id"));
-				strojnaOprema.setNaziv(rs.getString("naziv"));
-				strojnaOprema.setTip(rs.getString("tip"));
-				strojnaOprema.setSerijskaStevilka(rs.getString("serijska_stevilka"));
-				strojnaOprema.setDatumNakupa(rs.getDate("datum_nakupa").toLocalDate());
+				strojnaOprema.setStrojnaOpremaId(resultSet.getInt("strojna_oprema_id"));
+				strojnaOprema.setNaziv(resultSet.getString("naziv"));
+				strojnaOprema.setTip(resultSet.getString("tip"));
+				strojnaOprema.setSerijskaStevilka(resultSet.getString("serijska_stevilka"));
+				strojnaOprema.setDatumNakupa(resultSet.getDate("datum_nakupa").toLocalDate());
 
 				strojnaOpremaList.add(strojnaOprema);
 			}
@@ -47,21 +55,30 @@ public class StrojnaOpremaDAO implements GenericDAO<StrojnaOprema, Integer> {
 
 	@Override
 	public Optional<StrojnaOprema> findById(Integer id) {
-		String sql = "SELECT * FROM STROJNA_OPREMA WHERE strojna_oprema_id = ?";
+		String sql = """
+				SELECT
+					strojna_oprema_id,
+					naziv,
+					tip,
+					serijska_stevilka,
+					datum_nakupa
+				FROM STROJNA_OPREMA
+				WHERE strojna_oprema_id = ?
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setInt(1, id);
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, id);
 
-			try (ResultSet rs = stmt.executeQuery()) {
-				if (rs.next()) {
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (resultSet.next()) {
 					StrojnaOprema strojnaOprema = new StrojnaOprema();
 
-					strojnaOprema.setStrojnaOpremaId(rs.getInt("strojna_oprema_id"));
-					strojnaOprema.setNaziv(rs.getString("naziv"));
-					strojnaOprema.setTip(rs.getString("tip"));
-					strojnaOprema.setSerijskaStevilka(rs.getString("serijska_stevilka"));
-					strojnaOprema.setDatumNakupa(rs.getDate("datum_nakupa").toLocalDate());
+					strojnaOprema.setStrojnaOpremaId(resultSet.getInt("strojna_oprema_id"));
+					strojnaOprema.setNaziv(resultSet.getString("naziv"));
+					strojnaOprema.setTip(resultSet.getString("tip"));
+					strojnaOprema.setSerijskaStevilka(resultSet.getString("serijska_stevilka"));
+					strojnaOprema.setDatumNakupa(resultSet.getDate("datum_nakupa").toLocalDate());
 
 					return Optional.of(strojnaOprema);
 				}
@@ -75,17 +92,20 @@ public class StrojnaOpremaDAO implements GenericDAO<StrojnaOprema, Integer> {
 
 	@Override
 	public void insert(StrojnaOprema entity) {
-		String sql = "INSERT INTO STROJNA_OPREMA VALUES (?, ?, ?, ?, ?)";
+		String sql = """
+				INSERT INTO STROJNA_OPREMA
+				VALUES (?, ?, ?, ?, ?)
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setInt(1, entity.getStrojnaOpremaId());
-			stmt.setString(2, entity.getNaziv());
-			stmt.setString(3, entity.getTip());
-			stmt.setString(4, entity.getSerijskaStevilka());
-			stmt.setDate(5, Date.valueOf(entity.getDatumNakupa()));
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, entity.getStrojnaOpremaId());
+			statement.setString(2, entity.getNaziv());
+			statement.setString(3, entity.getTip());
+			statement.setString(4, entity.getSerijskaStevilka());
+			statement.setDate(5, Date.valueOf(entity.getDatumNakupa()));
 
-			stmt.executeUpdate();
+			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -93,17 +113,24 @@ public class StrojnaOpremaDAO implements GenericDAO<StrojnaOprema, Integer> {
 
 	@Override
 	public void update(StrojnaOprema entity) {
-		String sql = "UPDATE STROJNA_OPREMA SET naziv = ?, tip = ?, serijska_stevilka = ?, datum_nakupa = ? WHERE strojna_oprema_id = ?";
+		String sql = """
+				UPDATE STROJNA_OPREMA
+				SET naziv = ?,
+					tip = ?,
+					serijska_stevilka = ?,
+					datum_nakupa = ?
+				WHERE strojna_oprema_id = ?
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setString(1, entity.getNaziv());
-			stmt.setString(2, entity.getTip());
-			stmt.setString(3, entity.getSerijskaStevilka());
-			stmt.setDate(4, Date.valueOf(entity.getDatumNakupa()));
-			stmt.setInt(5, entity.getStrojnaOpremaId());
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setString(1, entity.getNaziv());
+			statement.setString(2, entity.getTip());
+			statement.setString(3, entity.getSerijskaStevilka());
+			statement.setDate(4, Date.valueOf(entity.getDatumNakupa()));
+			statement.setInt(5, entity.getStrojnaOpremaId());
 
-			stmt.executeUpdate();
+			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -111,13 +138,16 @@ public class StrojnaOpremaDAO implements GenericDAO<StrojnaOprema, Integer> {
 
 	@Override
 	public void delete(Integer id) {
-		String sql = "DELETE FROM STROJNA_OPREMA WHERE strojna_oprema_id = ?";
+		String sql = """
+				DELETE FROM STROJNA_OPREMA
+				WHERE strojna_oprema_id = ?
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setInt(1, id);
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, id);
 
-			stmt.executeUpdate();
+			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

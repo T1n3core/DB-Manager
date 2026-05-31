@@ -21,19 +21,27 @@ public class ZaposleniDAO implements GenericDAO<Zaposleni, Integer> {
 	public List<Zaposleni> findAll() {
 		List<Zaposleni> zaposleniList = new ArrayList<>();
 
-		String sql = "SELECT * FROM ZAPOSLENI";
+		String sql = """
+				SELECT
+					zaposleni_id,
+					ime,
+					priimek,
+					email,
+					oddelek
+				FROM ZAPOSLENI
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql);
-				ResultSet rs = stmt.executeQuery()) {
-			while (rs.next()) {
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql);
+				ResultSet resultSet = statement.executeQuery()) {
+			while (resultSet.next()) {
 				Zaposleni zaposleni = new Zaposleni();
 
-				zaposleni.setZaposleniId(rs.getInt("zaposleni_id"));
-				zaposleni.setIme(rs.getString("ime"));
-				zaposleni.setPriimek(rs.getString("priimek"));
-				zaposleni.setEmail(rs.getString("email"));
-				zaposleni.setOddelek(rs.getString("oddelek"));
+				zaposleni.setZaposleniId(resultSet.getInt("zaposleni_id"));
+				zaposleni.setIme(resultSet.getString("ime"));
+				zaposleni.setPriimek(resultSet.getString("priimek"));
+				zaposleni.setEmail(resultSet.getString("email"));
+				zaposleni.setOddelek(resultSet.getString("oddelek"));
 
 				zaposleniList.add(zaposleni);
 			}
@@ -46,21 +54,30 @@ public class ZaposleniDAO implements GenericDAO<Zaposleni, Integer> {
 
 	@Override
 	public Optional<Zaposleni> findById(Integer id) {
-		String sql = "SELECT * FROM ZAPOSLENI WHERE zaposleni_id = ?";
+		String sql = """
+				SELECT
+					zaposleni_id,
+					ime
+					priimek,
+					email,
+					oddelek
+				FROM ZAPOSLENI
+				WHERE zaposleni_id = ?
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setInt(1, id);
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, id);
 
-			try (ResultSet rs = stmt.executeQuery()) {
-				if (rs.next()) {
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (resultSet.next()) {
 					Zaposleni zaposleni = new Zaposleni();
 
-					zaposleni.setZaposleniId(rs.getInt("zaposleni_id"));
-					zaposleni.setIme(rs.getString("ime"));
-					zaposleni.setPriimek(rs.getString("priimek"));
-					zaposleni.setEmail(rs.getString("email"));
-					zaposleni.setOddelek(rs.getString("oddelek"));
+					zaposleni.setZaposleniId(resultSet.getInt("zaposleni_id"));
+					zaposleni.setIme(resultSet.getString("ime"));
+					zaposleni.setPriimek(resultSet.getString("priimek"));
+					zaposleni.setEmail(resultSet.getString("email"));
+					zaposleni.setOddelek(resultSet.getString("oddelek"));
 
 					return Optional.of(zaposleni);
 				}
@@ -74,17 +91,20 @@ public class ZaposleniDAO implements GenericDAO<Zaposleni, Integer> {
 
 	@Override
 	public void insert(Zaposleni entity) {
-		String sql = "INSERT INTO ZAPOSLENI VALUES (?, ?, ?, ?, ?)";
+		String sql = """
+				INSERT INTO ZAPOSLENI
+				VALUES (?, ?, ?, ?, ?)
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setInt(1, entity.getZaposleniId());
-			stmt.setString(2, entity.getIme());
-			stmt.setString(3, entity.getPriimek());
-			stmt.setString(4, entity.getEmail());
-			stmt.setString(5, entity.getOddelek());
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, entity.getZaposleniId());
+			statement.setString(2, entity.getIme());
+			statement.setString(3, entity.getPriimek());
+			statement.setString(4, entity.getEmail());
+			statement.setString(5, entity.getOddelek());
 
-			stmt.executeUpdate();
+			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -92,17 +112,24 @@ public class ZaposleniDAO implements GenericDAO<Zaposleni, Integer> {
 
 	@Override
 	public void update(Zaposleni entity) {
-		String sql = "UPDATE zaposleni SET ime = ?, priimek = ?, email = ?, oddelek = ? WHERE zaposleni_id = ?";
+		String sql = """
+				UPDATE ZAPOSLENI
+				SET ime = ?,
+					priimek = ?,
+					email = ?,
+					oddelek = ?
+				WHERE zaposleni_id = ?
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setString(1, entity.getIme());
-			stmt.setString(2, entity.getPriimek());
-			stmt.setString(3, entity.getEmail());
-			stmt.setString(4, entity.getOddelek());
-			stmt.setInt(5, entity.getZaposleniId());
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setString(1, entity.getIme());
+			statement.setString(2, entity.getPriimek());
+			statement.setString(3, entity.getEmail());
+			statement.setString(4, entity.getOddelek());
+			statement.setInt(5, entity.getZaposleniId());
 
-			stmt.executeUpdate();
+			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -110,13 +137,16 @@ public class ZaposleniDAO implements GenericDAO<Zaposleni, Integer> {
 
 	@Override
 	public void delete(Integer id) {
-		String sql = "DELETE FROM ZAPOSLENI WHERE zaposleni_id = ?";
+		String sql = """
+				DELETE FROM ZAPOSLENI
+				WHERE zaposleni_id = ?
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setInt(1, id);
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, id);
 
-			stmt.executeUpdate();
+			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

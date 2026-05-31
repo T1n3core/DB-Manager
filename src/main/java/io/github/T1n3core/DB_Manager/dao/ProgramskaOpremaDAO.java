@@ -21,18 +21,25 @@ public class ProgramskaOpremaDAO implements GenericDAO<ProgramskaOprema, Integer
 	public List<ProgramskaOprema> findAll() {
 		List<ProgramskaOprema> programskaOpremaList = new ArrayList<>();
 
-		String sql = "SELECT * FROM PROGRAMSKA_OPREMA";
+		String sql = """
+				SELECT
+					programska_oprema_id,
+					naziv,
+					verzija,
+					proizvajalec
+				FROM PROGRAMSKA_OPREMA
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql);
-				ResultSet rs = stmt.executeQuery()) {
-			while (rs.next()) {
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql);
+				ResultSet resultSet = statement.executeQuery()) {
+			while (resultSet.next()) {
 				ProgramskaOprema programskaOprema = new ProgramskaOprema();
 
-				programskaOprema.setProgramskaOpremaId(rs.getInt("programska_oprema_id"));
-				programskaOprema.setNaziv(rs.getString("naziv"));
-				programskaOprema.setVerzija(rs.getString("verzija"));
-				programskaOprema.setProizvajalec(rs.getString("proizvajalec"));
+				programskaOprema.setProgramskaOpremaId(resultSet.getInt("programska_oprema_id"));
+				programskaOprema.setNaziv(resultSet.getString("naziv"));
+				programskaOprema.setVerzija(resultSet.getString("verzija"));
+				programskaOprema.setProizvajalec(resultSet.getString("proizvajalec"));
 
 				programskaOpremaList.add(programskaOprema);
 			}
@@ -45,20 +52,28 @@ public class ProgramskaOpremaDAO implements GenericDAO<ProgramskaOprema, Integer
 
 	@Override
 	public Optional<ProgramskaOprema> findById(Integer id) {
-		String sql = "SELECT * FROM PROGRAMSKA_OPREMA WHERE programska_oprema_id = ?";
+		String sql = """
+				SELECT
+					programska_oprema_id,
+					naziv,
+					verzija,
+					proizvajalec
+				FROM PROGRAMSKA_OPREMA
+				WHERE programska_oprema_id = ?
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setInt(1, id);
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, id);
 
-			try (ResultSet rs = stmt.executeQuery()) {
-				if (rs.next()) {
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (resultSet.next()) {
 					ProgramskaOprema programskaOprema = new ProgramskaOprema();
 
-					programskaOprema.setProgramskaOpremaId(rs.getInt("programska_oprema_id"));
-					programskaOprema.setNaziv(rs.getString("naziv"));
-					programskaOprema.setVerzija(rs.getString("verzija"));
-					programskaOprema.setProizvajalec(rs.getString("proizvajalec"));
+					programskaOprema.setProgramskaOpremaId(resultSet.getInt("programska_oprema_id"));
+					programskaOprema.setNaziv(resultSet.getString("naziv"));
+					programskaOprema.setVerzija(resultSet.getString("verzija"));
+					programskaOprema.setProizvajalec(resultSet.getString("proizvajalec"));
 
 					return Optional.of(programskaOprema);
 				}
@@ -72,16 +87,19 @@ public class ProgramskaOpremaDAO implements GenericDAO<ProgramskaOprema, Integer
 
 	@Override
 	public void insert(ProgramskaOprema entity) {
-		String sql = "INSERT INTO PROGRAMSKA_OPREMA VALUES (?, ?, ?, ?)";
+		String sql = """
+				INSERT INTO PROGRAMSKA_OPREMA
+				VALUES (?, ?, ?, ?)
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setInt(1, entity.getProgramskaOpremaId());
-			stmt.setString(2, entity.getNaziv());
-			stmt.setString(3, entity.getVerzija());
-			stmt.setString(4, entity.getProizvajalec());
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, entity.getProgramskaOpremaId());
+			statement.setString(2, entity.getNaziv());
+			statement.setString(3, entity.getVerzija());
+			statement.setString(4, entity.getProizvajalec());
 
-			stmt.executeUpdate();
+			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -89,16 +107,22 @@ public class ProgramskaOpremaDAO implements GenericDAO<ProgramskaOprema, Integer
 
 	@Override
 	public void update(ProgramskaOprema entity) {
-		String sql = "UPDATE PROGRAMSKA_OPREMA SET naziv = ?, verzija = ?, proizvajalec = ? WHERE programska_oprema_id = ?";
+		String sql = """
+				UPDATE PROGRAMSKA_OPREMA
+				SET naziv = ?,
+					verzija = ?,
+					proizvajalec = ?
+				WHERE programska_oprema_id = ?
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setString(1, entity.getNaziv());
-			stmt.setString(2, entity.getVerzija());
-			stmt.setString(3, entity.getProizvajalec());
-			stmt.setInt(4, entity.getProgramskaOpremaId());
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setString(1, entity.getNaziv());
+			statement.setString(2, entity.getVerzija());
+			statement.setString(3, entity.getProizvajalec());
+			statement.setInt(4, entity.getProgramskaOpremaId());
 
-			stmt.executeUpdate();
+			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -106,13 +130,16 @@ public class ProgramskaOpremaDAO implements GenericDAO<ProgramskaOprema, Integer
 
 	@Override
 	public void delete(Integer id) {
-		String sql = "DELETE FROM PROGRAMSKA_OPREMA WHERE programska_oprema_id = ?";
+		String sql = """
+				DELETE FROM PROGRAMSKA_OPREMA
+				WHERE programska_oprema_id = ?
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setInt(1, id);
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, id);
 
-			stmt.executeUpdate();
+			statement.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

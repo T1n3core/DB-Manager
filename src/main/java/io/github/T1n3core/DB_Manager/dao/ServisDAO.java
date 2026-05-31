@@ -1,15 +1,16 @@
 package io.github.T1n3core.DB_Manager.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import io.github.T1n3core.DB_Manager.db.DatabaseConnection;
 import io.github.T1n3core.DB_Manager.model.Servis;
+import io.github.T1n3core.DB_Manager.model.StrojnaOprema;
 
 /**
  * Implementation of the
@@ -21,13 +22,37 @@ public class ServisDAO implements GenericDAO<Servis, Integer> {
 	public List<Servis> findAll() {
 		List<Servis> servisList = new ArrayList<>();
 
-		String sql = "SELECT * FROM SERVIS";
+		String sql = """
+				SELECT
+					s.servis_id,
+					s.datum_servisa,
+					s.opis,
+					so.strojna_oprema_id,
+					so.naziv,
+					so.tip,
+					so.serijska_stevilka,
+					so.datum_nakupa
+				FROM SERVIS s
+				INNER JOIN STROJNA_OPREMA so
+					ON s.strojna_oprema_id = so.strojna_oprema_id
+				""";
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql);
-				ResultSet rs = stmt.executeQuery()) {
-			while (rs.next()) {
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql);
+				ResultSet resultSet = statement.executeQuery()) {
+			while (resultSet.next()) {
 				Servis servis = new Servis();
+
+				servis.setServisId(resultSet.getInt("servis_id"));
+				servis.setStrojnaOprema(
+						new StrojnaOprema(
+								resultSet.getInt("strojna_oprema_id"),
+								resultSet.getString("naziv"),
+								resultSet.getString("tip"),
+								resultSet.getString("serijska_stevilka"),
+								resultSet.getDate("datum_nakupa").toLocalDate()));
+				servis.setDatumServisa(resultSet.getDate("datum_servisa").toLocalDate());
+				servis.setOpis(resultSet.getString("opis"));
 
 				servisList.add(servis);
 			}
@@ -40,29 +65,105 @@ public class ServisDAO implements GenericDAO<Servis, Integer> {
 
 	@Override
 	public Optional<Servis> findById(Integer id) {
-		return servisi.stream().filter(servis -> servis.getServisId() == id).findFirst();
+		String sql = """
+				SELECT
+					s.servis_id,
+					s.datum_servisa,
+					s.opis,
+					so.strojna_oprema_id,
+					so.naziv,
+					so.tip,
+					so.serijska_stevilka,
+					so.datum_nakupa
+				FROM SERVIS s
+				INNER JOIN STROJNA_OPREMA so
+					ON s.strojna_oprema_id = so.strojna_oprema_id
+				WHERE servis_id = ?
+				""";
+
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, id);
+
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (resultSet.next()) {
+					Servis servis = new Servis();
+
+					servis.setServisId(resultSet.getInt("servis_id"));
+					servis.setStrojnaOprema(
+							new StrojnaOprema(
+									resultSet.getInt("strojna_oprema_id"), resultSet.getString("naziv"),
+									resultSet.getString("tip"),
+									resultSet.getString("serijska_stevilka"),
+									resultSet.getDate("datum_nakupa").toLocalDate()));
+					servis.setDatumServisa(resultSet.getDate("datum_servisa").toLocalDate());
+					servis.setOpis(resultSet.getString("opis"));
+
+					return Optional.of(servis);
+				}
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+
+		return Optional.empty();
 	}
 
 	@Override
 	public void insert(Servis entity) {
-		servisi.add(entity);
+		String sql = """
+				INSERT INTO SERVIS
+				VALUES (?, ?, ?, ?)
+				""";
+
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, entity.getServisId());
+			statement.setInt(2, entity.getStrojnaOprema().getStrojnaOpremaId());
+			statement.setDate(3, Date.valueOf(entity.getDatumServisa()));
+			statement.setString(4, entity.getOpis());
+
+			statement.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException();
+		}
 	}
 
 	@Override
 	public void update(Servis entity) {
-		Optional<Servis> existingServis = findById(entity.getServisId());
+		String sql = """
+				UPDATE SERVIS
+				SET strojna_oprema_id = ?,
+					datum_servisa = ?,
+					opis = ?
+				WHERE servis_id = ?
+				""";
 
-		if (existingServis.isPresent()) {
-			Servis servis = existingServis.get();
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, entity.getStrojnaOprema().getStrojnaOpremaId());
+			statement.setDate(2, Date.valueOf(entity.getDatumServisa()));
+			statement.setString(3, entity.getOpis());
+			statement.setInt(4, entity.getServisId());
 
-			servis.setDatumServisa(entity.getDatumServisa());
-			servis.setOpis(entity.getOpis());
-			servis.setStrojnaOprema(entity.getStrojnaOprema());
+			statement.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException();
 		}
 	}
 
 	@Override
 	public void delete(Integer id) {
-		servisi.removeIf(servis -> servis.getServisId() == id);
+		String sql = """
+				DELETE FROM SERVIS
+				WHERE servis_id = ?
+				""";
+
+		try (Connection connection = DatabaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, id);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
