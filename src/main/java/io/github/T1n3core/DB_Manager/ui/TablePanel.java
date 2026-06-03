@@ -15,12 +15,11 @@ import javax.swing.JTable;
  * switch active table.
  */
 public class TablePanel extends JPanel {
-	private JTable currentTableDisplay; // TODO: replace this with AbstractTableModel subclass.
+	private JTable currentTableDisplay;
 	private JComboBox<String> currentTable;
 	private JButton insertButton;
 	private JButton updateButton;
 	private JButton deleteButton;
-	private JButton queryButton;
 
 	public TablePanel() {
 		initComponents();
@@ -30,7 +29,6 @@ public class TablePanel extends JPanel {
 
 	private void initComponents() {
 		currentTable = new JComboBox<>();
-		queryButton = new JButton("query");
 		insertButton = new JButton("new");
 		updateButton = new JButton("modify");
 		deleteButton = new JButton("delete");
@@ -44,8 +42,6 @@ public class TablePanel extends JPanel {
 		controlsPanel.setLayout(new BoxLayout(controlsPanel, BoxLayout.Y_AXIS));
 		controlsPanel.add(currentTable);
 		controlsPanel.add(Box.createVerticalStrut(30));
-		controlsPanel.add(queryButton);
-		controlsPanel.add(Box.createVerticalStrut(10));
 		controlsPanel.add(insertButton);
 		controlsPanel.add(Box.createVerticalStrut(10));
 		controlsPanel.add(updateButton);
@@ -61,17 +57,12 @@ public class TablePanel extends JPanel {
 
 	private void initActions() {
 		currentTable.addActionListener(e -> onTableChange());
-		queryButton.addActionListener(e -> onQuery());
 		insertButton.addActionListener(e -> onInsert());
 		updateButton.addActionListener(e -> onUpdate());
 		deleteButton.addActionListener(e -> onDelete());
 	}
 
 	private void onTableChange() {
-
-	}
-
-	private void onQuery() {
 
 	}
 

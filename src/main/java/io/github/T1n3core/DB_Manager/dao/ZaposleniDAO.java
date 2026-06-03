@@ -57,7 +57,7 @@ public class ZaposleniDAO implements GenericDAO<Zaposleni, Integer> {
 		String sql = """
 				SELECT
 					zaposleni_id,
-					ime
+					ime,
 					priimek,
 					email,
 					oddelek

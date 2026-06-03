@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Utility class for fetching a connection to the database.
+ * Provides database connections using runtime credentials.
  */
 public class DatabaseConnection {
 	static {
@@ -21,6 +21,13 @@ public class DatabaseConnection {
 	}
 
 	public static Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(DatabaseConfig.URL, DatabaseConfig.USERNAME, DatabaseConfig.PASSWORD);
+		if (DatabaseConfig.getUsername() == null || DatabaseConfig.getPassword() == null) {
+			throw new SQLException("Database credentials not set.");
+		}
+
+		return DriverManager.getConnection(
+				DatabaseConfig.getUrl(),
+				DatabaseConfig.getUsername(),
+				DatabaseConfig.getPassword());
 	}
 }
