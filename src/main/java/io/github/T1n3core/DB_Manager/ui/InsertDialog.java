@@ -17,9 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-
 import com.github.lgooddatepicker.components.DatePicker;
-
 import io.github.T1n3core.DB_Manager.dao.DAOFactory;
 import io.github.T1n3core.DB_Manager.dao.GenericDAO;
 
@@ -43,6 +41,42 @@ public class InsertDialog extends JDialog {
 		pack();
 		setLocationRelativeTo(null);
 		setModal(true);
+	}
+
+	public InsertDialog(Class<?> entityClass, Object existingEntity) {
+		this(entityClass);
+
+		if (existingEntity != null) {
+			loadValues(existingEntity);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void loadValues(Object entity) {
+		try {
+			for (var entry : editors.entrySet()) {
+				Field field = entry.getKey();
+				field.setAccessible(true);
+
+				Object value = field.get(entity);
+
+				JComponent editor = entry.getValue();
+
+				if (editor instanceof JTextField tf) {
+					tf.setText(String.valueOf(value));
+				}
+
+				else if (editor instanceof DatePicker dp) {
+					dp.setDate((LocalDate) value);
+				}
+
+				else if (editor instanceof ForeignKeyAutocompleteTextField<?> fk) {
+					((ForeignKeyAutocompleteTextField<Object>) fk).setSelectedValue(value);
+				}
+			}
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
 	private void loadForeignKeys() {
@@ -119,7 +153,6 @@ public class InsertDialog extends JDialog {
 
 		if (type == int.class || type == Integer.class)
 			return new JTextField("0", 20);
-		// TODO: implement integer protection
 
 		if (type == LocalDate.class)
 			return new DatePicker();
@@ -205,8 +238,36 @@ public class InsertDialog extends JDialog {
 			return dp.getDate();
 		}
 
-		// TODO: refactor for pattern matching switch
-
 		return null;
+	}
+
+	public Object buildEntity() {
+		try {
+			Object entity = entityClass.getDeclaredConstructor().newInstance();
+
+			for (var entry : getValues().entrySet()) {
+				Field field = entry.getKey();
+				field.setAccessible(true);
+
+				field.set(entity, entry.getValue());
+			}
+
+			return entity;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void updateEntity(Object entity) {
+		try {
+			for (var entry : getValues().entrySet()) {
+				Field field = entry.getKey();
+				field.setAccessible(true);
+
+				field.set(entity, entry.getValue());
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

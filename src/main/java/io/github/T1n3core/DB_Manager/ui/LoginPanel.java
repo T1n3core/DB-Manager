@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.function.Consumer;
 
 /**
- * Simple login panel with DB validation.
+ * Simple login panel with database validation.
  */
 public class LoginPanel extends JPanel {
 	private JTextField userTextField;
@@ -43,21 +43,35 @@ public class LoginPanel extends JPanel {
 	private void initLayout() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-		add(new JLabel("VPIS V BAZO PODATKOV"));
-		add(Box.createVerticalStrut(8));
+		userTextField.setMaximumSize(userTextField.getPreferredSize());
+		passwdTextField.setMaximumSize(passwdTextField.getPreferredSize());
 
-		add(new JLabel("uporabniško ime:"));
+		userTextField.setAlignmentX(CENTER_ALIGNMENT);
+		passwdTextField.setAlignmentX(CENTER_ALIGNMENT);
+		loginButton.setAlignmentX(CENTER_ALIGNMENT);
+		errorLabel.setAlignmentX(CENTER_ALIGNMENT);
+
+		JLabel tmp = new JLabel("VPIS V BAZO PODATKOV");
+		tmp.setAlignmentX(CENTER_ALIGNMENT);
+		add(tmp);
+		add(Box.createVerticalStrut(40));
+
+		tmp = new JLabel("uporabniško ime:");
+		tmp.setAlignmentX(CENTER_ALIGNMENT);
+		add(tmp);
 		add(userTextField);
 
-		add(Box.createVerticalStrut(5));
+		add(Box.createVerticalStrut(20));
 
-		add(new JLabel("geslo:"));
+		tmp = new JLabel("geslo:");
+		tmp.setAlignmentX(CENTER_ALIGNMENT);
+		add(tmp);
 		add(passwdTextField);
 
-		add(Box.createVerticalStrut(8));
+		add(Box.createVerticalStrut(20));
 		add(loginButton);
 
-		add(Box.createVerticalStrut(8));
+		add(Box.createVerticalStrut(20));
 		add(errorLabel);
 	}
 

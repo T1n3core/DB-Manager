@@ -141,7 +141,9 @@ public class NamestitevDAO implements GenericDAO<Namestitev, Integer> {
 
 		try (Connection connection = DatabaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			statement.setInt(1, entity.getNamestitevId());
+			int newId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+
+			statement.setInt(1, newId);
 			statement.setInt(2, entity.getStrojnaOprema().getStrojnaOpremaId());
 			statement.setInt(3, entity.getProgramskaOprema().getProgramskaOpremaId());
 			statement.setDate(4, Date.valueOf(entity.getDatumNamestitve()));

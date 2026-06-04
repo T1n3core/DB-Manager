@@ -26,7 +26,7 @@ public class DodelitevDAO implements GenericDAO<Dodelitev, Integer> {
 		String sql = """
 				SELECT
 					d.dodelitev_id,
-					z.zaposlen_id,
+					z.zaposleni_id,
 					z.ime,
 					z.priimek,
 					z.email,
@@ -38,7 +38,7 @@ public class DodelitevDAO implements GenericDAO<Dodelitev, Integer> {
 					so.datum_nakupa
 				FROM DODELITEV d
 				INNER JOIN ZAPOSLENI z
-					ON d.zaposlen_id = z.zaposlen_id
+					ON d.zaposleni_id = z.zaposleni_id
 				INNER JOIN STROJNA_OPREMA so
 					ON d.strojna_oprema_id = so.strojna_oprema_id
 				""";
@@ -52,7 +52,7 @@ public class DodelitevDAO implements GenericDAO<Dodelitev, Integer> {
 				dodelitev.setDodelitevId(resultSet.getInt("dodelitev_id"));
 				dodelitev.setZaposleni(
 						new Zaposleni(
-								resultSet.getInt("zaposlen_id"),
+								resultSet.getInt("zaposleni_id"),
 								resultSet.getString("ime"),
 								resultSet.getString("priimek"),
 								resultSet.getString("email"),
@@ -79,7 +79,7 @@ public class DodelitevDAO implements GenericDAO<Dodelitev, Integer> {
 		String sql = """
 				SELECT
 					d.dodelitev_id,
-					z.zaposlen_id,
+					z.zaposleni_id,
 					z.ime,
 					z.priimek,
 					z.email,
@@ -91,7 +91,7 @@ public class DodelitevDAO implements GenericDAO<Dodelitev, Integer> {
 					so.datum_nakupa
 				FROM DODELITEV d
 				INNER JOIN ZAPOSLENI z
-					ON d.zaposlen_id = z.zaposlen_id
+					ON d.zaposleni_id = z.zaposleni_id
 				INNER JOIN STROJNA_OPREMA so
 					ON d.strojna_oprema_id = so.strojna_oprema_id
 				WHERE d.dodelitev_id = ?
@@ -108,7 +108,7 @@ public class DodelitevDAO implements GenericDAO<Dodelitev, Integer> {
 					dodelitev.setDodelitevId(resultSet.getInt("dodelitev_id"));
 					dodelitev.setZaposleni(
 							new Zaposleni(
-									resultSet.getInt("zaposlen_id"),
+									resultSet.getInt("zaposleni_id"),
 									resultSet.getString("ime"),
 									resultSet.getString("priimek"),
 									resultSet.getString("email"),
@@ -140,7 +140,9 @@ public class DodelitevDAO implements GenericDAO<Dodelitev, Integer> {
 
 		try (Connection connection = DatabaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			statement.setInt(1, entity.getDodelitevId());
+			int newId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+
+			statement.setInt(1, newId);
 			statement.setInt(2, entity.getZaposleni().getZaposleniId());
 			statement.setInt(3, entity.getStrojnaOprema().getStrojnaOpremaId());
 
@@ -154,7 +156,7 @@ public class DodelitevDAO implements GenericDAO<Dodelitev, Integer> {
 	public void update(Dodelitev entity) {
 		String sql = """
 				UPDATE DODELITEV
-				SET zaposlen_id = ?,
+				SET zaposleni_id = ?,
 					strojna_oprema_id = ?
 				WHERE dodelitev_id = ?
 				""";

@@ -50,4 +50,9 @@ public class ProgramskaOprema {
 	public void setProizvajalec(String proizvajalec) {
 		this.proizvajalec = proizvajalec;
 	}
+
+	@Override
+	public String toString() {
+		return naziv;
+	}
 }

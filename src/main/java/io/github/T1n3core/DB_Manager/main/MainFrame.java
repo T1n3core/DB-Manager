@@ -45,7 +45,7 @@ public class MainFrame extends JFrame {
 	private void initComponents() {
 		menuBar = new JMenuBar();
 
-		settingsButton = new JButton("nastavitve");
+		settingsButton = new JButton("tema");
 		helpButton = new JButton("pomoč");
 		creditsButton = new JButton("vizitka");
 

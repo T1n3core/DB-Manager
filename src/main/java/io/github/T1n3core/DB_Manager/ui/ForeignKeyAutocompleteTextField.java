@@ -26,14 +26,15 @@ public class ForeignKeyAutocompleteTextField<T> extends JTextField {
 	private final DefaultListModel<AutocompleteItem<T>> listModel = new DefaultListModel<>();
 	private final JList<AutocompleteItem<T>> suggestionList = new JList<>(listModel);
 	private final JPopupMenu popup = new JPopupMenu();
+	private final Function<T, String> displayFunction;
 	private T selectedValue;
 
 	public ForeignKeyAutocompleteTextField(List<T> values, Function<T, String> displayFunction) {
 		super(20);
+		this.displayFunction = displayFunction;
 
 		for (T value : values) {
 			String display = displayFunction.apply(value);
-
 			trie.insert(display, new AutocompleteItem<>(display, value));
 		}
 
@@ -144,14 +145,25 @@ public class ForeignKeyAutocompleteTextField<T> extends JTextField {
 		if (item == null)
 			return;
 
-		setText(item.displayText());
-
 		selectedValue = item.value();
+
+		setText(displayFunction.apply(selectedValue));
 
 		popup.setVisible(false);
 	}
 
 	public T getSelectedValue() {
 		return selectedValue;
+	}
+
+	public void setSelectedValue(T value) {
+		selectedValue = value;
+
+		if (value == null) {
+			setText("");
+			return;
+		}
+
+		setText(displayFunction.apply(value));
 	}
 }

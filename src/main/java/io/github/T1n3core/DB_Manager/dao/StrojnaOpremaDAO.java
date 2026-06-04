@@ -34,7 +34,7 @@ public class StrojnaOpremaDAO implements GenericDAO<StrojnaOprema, Integer> {
 
 		try (Connection connection = DatabaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql);
-				ResultSet resultSet = statement.getResultSet()) {
+				ResultSet resultSet = statement.executeQuery()) {
 			while (resultSet.next()) {
 				StrojnaOprema strojnaOprema = new StrojnaOprema();
 
@@ -99,7 +99,9 @@ public class StrojnaOpremaDAO implements GenericDAO<StrojnaOprema, Integer> {
 
 		try (Connection connection = DatabaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			statement.setInt(1, entity.getStrojnaOpremaId());
+			int newId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+
+			statement.setInt(1, newId);
 			statement.setString(2, entity.getNaziv());
 			statement.setString(3, entity.getTip());
 			statement.setString(4, entity.getSerijskaStevilka());

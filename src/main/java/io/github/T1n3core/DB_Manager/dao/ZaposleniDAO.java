@@ -98,7 +98,9 @@ public class ZaposleniDAO implements GenericDAO<Zaposleni, Integer> {
 
 		try (Connection connection = DatabaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			statement.setInt(1, entity.getZaposleniId());
+			int newId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+
+			statement.setInt(1, newId);
 			statement.setString(2, entity.getIme());
 			statement.setString(3, entity.getPriimek());
 			statement.setString(4, entity.getEmail());

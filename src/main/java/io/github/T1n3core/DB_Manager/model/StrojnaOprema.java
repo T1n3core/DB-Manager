@@ -63,4 +63,9 @@ public class StrojnaOprema {
 	public void setDatumNakupa(LocalDate datumNakupa) {
 		this.datumNakupa = datumNakupa;
 	}
+
+	@Override
+	public String toString() {
+		return naziv;
+	}
 }

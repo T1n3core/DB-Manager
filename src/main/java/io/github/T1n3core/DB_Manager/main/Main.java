@@ -13,8 +13,3 @@ public class Main {
 		});
 	}
 }
-
-// TODO: things to implement:
-// table panel
-// history autocomplete
-// update and delete
