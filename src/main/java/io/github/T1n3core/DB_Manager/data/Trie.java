@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.Locale;
 
 /**
  * Generic trie data structure implementation.
@@ -13,7 +16,9 @@ import java.util.Map;
 public class Trie<T> {
 	private static class Node<T> {
 		Map<Character, Node<T>> children = new HashMap<>();
-		List<AutocompleteItem<T>> items = new ArrayList<>();
+		Set<AutocompleteItem<T>> items = new LinkedHashSet<>();
+		Set<AutocompleteItem<T>> cachedAll = null;
+		boolean dirty = true;
 	}
 
 	private final Node<T> root = new Node<>();
@@ -21,41 +26,64 @@ public class Trie<T> {
 	public void insert(String key, AutocompleteItem<T> item) {
 		Node<T> current = root;
 
-		key = key.toLowerCase();
+		key = key.toLowerCase(Locale.ROOT);
 
 		for (char c : key.toCharArray()) {
 			current = current.children.computeIfAbsent(c, _ -> new Node<>());
+			current.dirty = true;
 		}
 
-		current.items.add(item);
+		boolean added = current.items.add(item);
+		if (added) {
+			invalidateUpwards(root, key, 0);
+		}
 	}
 
 	public List<AutocompleteItem<T>> searchPrefix(String prefix) {
 		Node<T> current = root;
 
-		prefix = prefix.toLowerCase();
+		prefix = prefix.toLowerCase(Locale.ROOT);
 
 		for (char c : prefix.toCharArray()) {
 			current = current.children.get(c);
-
 			if (current == null)
 				return Collections.emptyList();
 		}
 
-		List<AutocompleteItem<T>> result = new ArrayList<>();
+		return new ArrayList<>(collectCached(current));
+	}
 
-		collect(current, result);
+	private Set<AutocompleteItem<T>> collectCached(Node<T> node) {
+		if (!node.dirty && node.cachedAll != null) {
+			return node.cachedAll;
+		}
+
+		LinkedHashSet<AutocompleteItem<T>> result = new LinkedHashSet<>();
+		collect(node, result);
+
+		node.cachedAll = result;
+		node.dirty = false;
 
 		return result;
 	}
 
-	private void collect(Node<T> node, List<AutocompleteItem<T>> result) {
+	private void collect(Node<T> node, Set<AutocompleteItem<T>> result) {
 		result.addAll(node.items);
 
 		for (Node<T> child : node.children.values()) {
 			collect(child, result);
 		}
 	}
-}
 
-// TODO: implement O(prefixLength) lookup
+	private void invalidateUpwards(Node<T> node, String key, int index) {
+		node.dirty = true;
+
+		if (index == key.length())
+			return;
+
+		Node<T> child = node.children.get(key.charAt(index));
+		if (child != null) {
+			invalidateUpwards(child, key, index + 1);
+		}
+	}
+}

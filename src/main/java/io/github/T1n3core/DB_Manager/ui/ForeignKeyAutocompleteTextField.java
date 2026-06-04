@@ -19,7 +19,7 @@ import io.github.T1n3core.DB_Manager.data.AutocompleteItem;
 import io.github.T1n3core.DB_Manager.data.Trie;
 
 /**
- * ForeignKeyAutocompleteTextField
+ * JTextField subclass that autocompletes based on a query to the database.
  */
 public class ForeignKeyAutocompleteTextField<T> extends JTextField {
 	private final Trie<T> trie = new Trie<>();
