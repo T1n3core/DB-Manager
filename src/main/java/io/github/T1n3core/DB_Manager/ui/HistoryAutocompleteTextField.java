@@ -17,7 +17,8 @@ import io.github.T1n3core.DB_Manager.data.AutocompleteItem;
 import io.github.T1n3core.DB_Manager.data.Trie;
 
 /**
- * JTextField subclass that autocompletes based on historically typed strings.
+ * Deprecated as there is no real use for this and due to time crucnh, do not
+ * use.
  */
 public class HistoryAutocompleteTextField extends JTextField {
 	private final Trie<String> trie = new Trie<>();

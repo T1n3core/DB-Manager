@@ -98,7 +98,7 @@ public class ZaposleniDAO implements GenericDAO<Zaposleni, Integer> {
 
 		try (Connection connection = DatabaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			int newId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+			int newId = IdGenerator.nextId("ZAPOSLENI", "zaposleni_id");
 
 			statement.setInt(1, newId);
 			statement.setString(2, entity.getIme());

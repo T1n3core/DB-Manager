@@ -70,8 +70,8 @@ public class InsertDialog extends JDialog {
 					dp.setDate((LocalDate) value);
 				}
 
-				else if (editor instanceof ForeignKeyAutocompleteTextField<?> fk) {
-					((ForeignKeyAutocompleteTextField<Object>) fk).setSelectedValue(value);
+				else if (editor instanceof ForeignKeyComboBox<?> fk) {
+					((ForeignKeyComboBox<Object>) fk).setSelectedValue(value);
 				}
 			}
 		} catch (Exception ex) {
@@ -171,7 +171,7 @@ public class InsertDialog extends JDialog {
 				}
 			};
 
-			return new ForeignKeyAutocompleteTextField(values, displayFn);
+			return new ForeignKeyComboBox(values, displayFn);
 		}
 
 		throw new IllegalArgumentException("Unsupported type: " + type);
@@ -226,11 +226,22 @@ public class InsertDialog extends JDialog {
 			if (type == String.class)
 				return tf.getText();
 
-			if (type == int.class || type == Integer.class)
-				return Integer.parseInt(tf.getText());
+			if (type == int.class || type == Integer.class) {
+				String text = tf.getText().trim();
+
+				if (text.isEmpty())
+					return 0;
+
+				try {
+					return Integer.parseInt(text);
+				} catch (NumberFormatException e) {
+					throw new IllegalArgumentException(
+							field.getName() + " must be a valid integer");
+				}
+			}
 		}
 
-		if (editor instanceof ForeignKeyAutocompleteTextField<?> fk) {
+		if (editor instanceof ForeignKeyComboBox<?> fk) {
 			return fk.getSelectedValue();
 		}
 

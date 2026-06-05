@@ -140,7 +140,7 @@ public class DodelitevDAO implements GenericDAO<Dodelitev, Integer> {
 
 		try (Connection connection = DatabaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			int newId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+			int newId = IdGenerator.nextId("DODELITEV", "dodelitev_id");
 
 			statement.setInt(1, newId);
 			statement.setInt(2, entity.getZaposleni().getZaposleniId());

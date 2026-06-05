@@ -94,7 +94,7 @@ public class ProgramskaOpremaDAO implements GenericDAO<ProgramskaOprema, Integer
 
 		try (Connection connection = DatabaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			int newId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+			int newId = IdGenerator.nextId("PROGRAMSKA_OPREMA", "programska_oprema_id");
 
 			statement.setInt(1, newId);
 			statement.setString(2, entity.getNaziv());

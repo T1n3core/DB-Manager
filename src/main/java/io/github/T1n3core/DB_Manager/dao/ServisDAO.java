@@ -118,7 +118,7 @@ public class ServisDAO implements GenericDAO<Servis, Integer> {
 
 		try (Connection connection = DatabaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			int newId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+			int newId = IdGenerator.nextId("SERVIS", "servis_id");
 
 			statement.setInt(1, newId);
 			statement.setInt(2, entity.getStrojnaOprema().getStrojnaOpremaId());
@@ -127,7 +127,7 @@ public class ServisDAO implements GenericDAO<Servis, Integer> {
 
 			statement.executeUpdate();
 		} catch (SQLException e) {
-			throw new RuntimeException();
+			throw new RuntimeException(e);
 		}
 	}
 

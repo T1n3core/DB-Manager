@@ -99,7 +99,7 @@ public class StrojnaOpremaDAO implements GenericDAO<StrojnaOprema, Integer> {
 
 		try (Connection connection = DatabaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			int newId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+			int newId = IdGenerator.nextId("STROJNA_OPREMA", "strojna_oprema_id");
 
 			statement.setInt(1, newId);
 			statement.setString(2, entity.getNaziv());
