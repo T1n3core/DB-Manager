@@ -53,9 +53,10 @@ The application connects to a fixed Oracle instance:jdbc:oracle:thin:@193.2.139.
 
 ---
 
-## Project Structureio.github.T1n3core.DB_Manager
+## Project Structure
 
 ```text
+io.github.T1n3core.DB_Manager
 ├── dao/                  # Data Access Objects
 │   ├── GenericDAO.java
 │   ├── DAOFactory.java
