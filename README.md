@@ -98,6 +98,7 @@ The application connects to a fixed Oracle instance:jdbc:oracle:thin:@193.2.139.
 
 ```bash
 java -cp ".:lib/*" io.github.T1n3core.DB_Manager.main.Main
+```
 Enter valid database credentials on the login screen
 Select a table and use the new / modify / delete buttons
 Usage
