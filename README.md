@@ -83,8 +83,10 @@ io.github.T1n3core.DB_Manager
 │   └── ...
 └── main/
 ├── Main.java
-└── MainFrame.javatext---
+└── MainFrame.java
 ```
+
+---
 
 ## How to Run
 
